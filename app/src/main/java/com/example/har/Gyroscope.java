@@ -10,15 +10,18 @@ import android.widget.Toast;
 public class Gyroscope implements SensorEventListener {
 
     TextView textView;
+    MainActivity mainActivity;
+    float x,y,z;
+    int i= 0;
     Sensor gyroscope;
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private final float[] deltaRotationVector = new float[4];
-    Gyroscope(SensorManager mgr, TextView textView)
+    Gyroscope(SensorManager mgr, TextView textView, MainActivity mainActivity)
     {
         this.textView = textView;
         this.gyroscope = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
+        this.mainActivity = mainActivity;
         if(gyroscope!=null)
         {
             mgr.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
@@ -38,26 +41,27 @@ public class Gyroscope implements SensorEventListener {
             if(timestamp!=0)
             {
                 final float dT = (event.timestamp - timestamp) * NS2S;
-                float axisX = event.values[0];
-                float axisY = event.values[1];
-                float axisZ = event.values[2];
 
-                float omegaMagnitude = (float) Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+                x = event.values[0];
+                y = event.values[1];
+                z = event.values[2];
+
+                float omegaMagnitude = (float) Math.sqrt(x*x + y*y + z*z);
 
                 if(omegaMagnitude>0.1)
                 {
-                    axisX /= omegaMagnitude;
-                    axisY /= omegaMagnitude;
-                    axisZ /= omegaMagnitude;
+                    x /= omegaMagnitude;
+                    y /= omegaMagnitude;
+                    y /= omegaMagnitude;
                 }
 
                 float thetaOverTwo = omegaMagnitude * dT / 2.0f;
                 float sinThetaOverTwo = (float) Math.sin(thetaOverTwo);
                 float cosThetaOverTwo = (float) Math.cos(thetaOverTwo);
 
-                deltaRotationVector[0] = sinThetaOverTwo * axisX;
-                deltaRotationVector[1] = sinThetaOverTwo * axisY;
-                deltaRotationVector[2] = sinThetaOverTwo * axisZ;
+                deltaRotationVector[0] = sinThetaOverTwo * x;
+                deltaRotationVector[1] = sinThetaOverTwo * y;
+                deltaRotationVector[2] = sinThetaOverTwo * z;
                 deltaRotationVector[3] = cosThetaOverTwo;
 
             }
@@ -72,7 +76,14 @@ public class Gyroscope implements SensorEventListener {
             {
                 orientations[i] = (float) (Math.toDegrees(orientations[i]));
             }
+
             textView.setText("Gyroscope vals:\n X: "+orientations[0]+"\nY: "+orientations[1]+"\nZ: "+orientations[2]);
+            i++;
+            if(i == 600){
+                i = 0;
+                DataCollection dc = new DataCollection(mainActivity);
+                dc.updateSheet(orientations[0], orientations[1], orientations[2], "Gyroscope");
+            }
         }
         else {
             System.out.println("Sensor type is not gyroscope");
