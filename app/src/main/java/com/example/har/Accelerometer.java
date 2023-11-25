@@ -10,12 +10,14 @@ import android.widget.Toast;
 public class Accelerometer implements SensorEventListener
 {
     TextView textView;
+    Sensor accelerometer;
     Accelerometer(SensorManager mgr, TextView textView)
     {
         this.textView = textView;
-        Sensor accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         // check is sensor is working or not
+
         if(accelerometer!=null)
         {
             mgr.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -24,9 +26,7 @@ public class Accelerometer implements SensorEventListener
 
             Toast.makeText(textView.getContext(), "Accelerometer not found",Toast.LENGTH_SHORT).show();
         }
-
     }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
