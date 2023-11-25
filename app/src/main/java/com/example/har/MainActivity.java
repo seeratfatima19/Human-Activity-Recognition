@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         if (sensormgr != null) {
             Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA);
             Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG);
+            Magnetometer magnet = new Magnetometer(sensormgr, textViewM);
         } else {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
