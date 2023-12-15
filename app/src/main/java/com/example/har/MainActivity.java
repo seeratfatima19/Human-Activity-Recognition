@@ -23,10 +23,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+
     TextView textViewA, textViewG,textViewM, IP;
     EditText IPtext;
 
     Button btnIP, btndis;
+
+    TextView textViewA, textViewG,textViewM;
+
     SensorManager sensormgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
     private void showToast(String ip){
         Toast.makeText(this, ip, Toast.LENGTH_SHORT).show();
     }
+
+
+
 
 
 
