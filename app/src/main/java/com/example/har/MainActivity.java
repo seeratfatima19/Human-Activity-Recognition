@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnIP, btndis;
 
-    TextView textViewA, textViewG,textViewM;
+
 
     SensorManager sensormgr;
     @Override
