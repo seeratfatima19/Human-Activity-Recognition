@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnIP, btndis;
 
-    TextView textViewA, textViewG,textViewM;
 
     SensorManager sensormgr;
     @Override
@@ -65,59 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
         final HttpURLConnection[] urlConnection = new HttpURLConnection[1];
 
-        btnIP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String myIP = IPtext.getText().toString();
-                Log.d("Your ip", myIP);
-                try{
-                    URL url = new URL("http://"+myIP);
-                    urlConnection[0] = (HttpURLConnection) url.openConnection();
+        //connecting server and disconnecting on button clicks
+        //creating server object and passing context to it so it can be used to create toasts
 
-                    if(urlConnection[0] != null){
-                        showToast("Server connected to: "+myIP);
-                    }
-                    try{
-                       urlConnection[0].setRequestMethod("POST");
-
-                       //enabling input output streams
-                       urlConnection[0].setDoInput(true);
-                       urlConnection[0].setDoOutput(true);
-
-                       //getting output stream
-                        OutputStream fout = new BufferedOutputStream(urlConnection[0].getOutputStream());
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fout));
-
-                       // WriteMyData();
-
-
-                    }
-                    catch(IOException e){
-                        //exception handling
-                    }
-
-                }catch (IOException e){
-                    //handling exceptions
-                }
-            }
-
-
-        });
-
-        btndis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                urlConnection[0].disconnect();
-                showToast("Server Disconnected");
-            }
-        });
+        Server srvr = new Server(this);
+        srvr.connect_disconnect(btnIP, IPtext, urlConnection, btndis);
+        //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
+        //url connection is also passed and also the IP of the server (IPtext)
 
 
     }
 
-    private void showToast(String ip){
-        Toast.makeText(this, ip, Toast.LENGTH_SHORT).show();
-    }
+
+
 
 
 
