@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         // bind views
         textViewA = (TextView) findViewById(R.id.acceleroView);
-        textViewG = (TextView) findViewById(R.id.gyroView);
-        textViewM = (TextView) findViewById(R.id.magnetoView);
+      //  textViewG = (TextView) findViewById(R.id.gyroView);
+        //textViewM = (TextView) findViewById(R.id.magnetoView);
 
         //binding Server IPs views and button
         IP = findViewById(R.id.ServerIp);

@@ -16,11 +16,11 @@ public class Magnetometer implements SensorEventListener {
     float x,y,z;
     int i = 0;
     Sensor magnetometer;
-    Magnetometer(SensorManager mgr, TextView textView, MainActivity mainActivity)
+    Magnetometer(SensorManager mgr, TextView textView)
     {
         this.textView = textView;
         this.magnetometer = mgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        this.mainActivity  = mainActivity;
+       // this.mainActivity  = mainActivity;
         if(magnetometer!=null)
         {
             mgr.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -39,12 +39,6 @@ public class Magnetometer implements SensorEventListener {
             y = event.values[1];
             z = event.values[2];
             textView.setText("Magnetometer vals:\n X: "+event.values[0]+"\nY: "+event.values[1]+"\nZ: "+event.values[2]);
-            i++;
-            if(i == 300){
-                i = 0;
-                DataCollection dc = new DataCollection(mainActivity);
-                dc.updateSheet(x,y,z,"Magnetometer");
-            }
         }
 
     }

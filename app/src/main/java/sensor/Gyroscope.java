@@ -20,11 +20,11 @@ public class Gyroscope implements SensorEventListener {
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private final float[] deltaRotationVector = new float[4];
-    Gyroscope(SensorManager mgr, TextView textView, MainActivity mainActivity)
+    Gyroscope(SensorManager mgr, TextView textView)
     {
         this.textView = textView;
         this.gyroscope = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        this.mainActivity = mainActivity;
+        //this.mainActivity = mainActivity;
         if(gyroscope!=null)
         {
             mgr.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
@@ -81,12 +81,7 @@ public class Gyroscope implements SensorEventListener {
             }
 
             textView.setText("Gyroscope vals:\n X: "+orientations[0]+"\nY: "+orientations[1]+"\nZ: "+orientations[2]);
-            i++;
-            if(i == 600){
-                i = 0;
-                DataCollection dc = new DataCollection(mainActivity);
-                dc.updateSheet(orientations[0], orientations[1], orientations[2], "Gyroscope");
-            }
+
         }
         else {
             System.out.println("Sensor type is not gyroscope");

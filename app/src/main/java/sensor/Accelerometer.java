@@ -46,12 +46,7 @@ public class Accelerometer implements SensorEventListener
             y = event.values[1];
             z = event.values[2];
             textView.setText("Accelerometer vals:\n X: "+event.values[0]+"\nY: "+event.values[1]+"\nZ: "+event.values[2]);
-            i++;
-            if(i == 500){
-                i = 0;
-                DataCollection dc = new DataCollection(mainActivity);
-                dc.updateSheet(x,y,z,"Accelerometer");
-            }
+
         }
         else {
             System.out.println("Sensor type is not accelerometer");
