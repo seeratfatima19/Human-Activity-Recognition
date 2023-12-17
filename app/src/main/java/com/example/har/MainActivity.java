@@ -22,6 +22,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import sensor.PhoneSensor;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         //taking data from all sensors
-
+/*
         if (sensormgr != null) {
             Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
             Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
@@ -61,7 +63,16 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
         }
+*/
 
+        if(sensormgr!=null)
+        {
+            PhoneSensor sensors = new PhoneSensor(sensormgr);
+        }
+        else {
+            System.out.println("Sensor Manager is null");
+            Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
+        }
         final HttpURLConnection[] urlConnection = new HttpURLConnection[1];
 
         //connecting server and disconnecting on button clicks
