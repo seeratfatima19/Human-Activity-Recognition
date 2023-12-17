@@ -1,4 +1,4 @@
-package com.example.har;
+package sensor;
 
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -6,6 +6,9 @@ import android.hardware.SensorManager;
 import android.widget.TextView;
 import android.hardware.Sensor;
 import android.widget.Toast;
+
+import com.example.har.DataCollection;
+import com.example.har.MainActivity;
 
 public class Gyroscope implements SensorEventListener {
 

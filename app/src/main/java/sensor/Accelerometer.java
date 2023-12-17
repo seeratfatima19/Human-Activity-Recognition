@@ -1,4 +1,4 @@
-package com.example.har;
+package sensor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -6,6 +6,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.har.DataCollection;
+import com.example.har.MainActivity;
 
 public class Accelerometer implements SensorEventListener
 {
