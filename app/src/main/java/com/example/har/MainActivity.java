@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(sensormgr!=null)
         {
-            PhoneSensor sensors = new PhoneSensor(sensormgr);
+            PhoneSensor sensors = new PhoneSensor(sensormgr, textViewA);
         }
         else {
             System.out.println("Sensor Manager is null");

@@ -17,11 +17,11 @@ public class Accelerometer implements SensorEventListener
     float x,y,z;
     int i = 0;
     Sensor accelerometer;
-    Accelerometer(SensorManager mgr, TextView textView, MainActivity mainActivity)
+    Accelerometer(SensorManager mgr, TextView textView)
     {
         this.textView = textView;
         this.accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        this.mainActivity = mainActivity;
+        //this.mainActivity = mainActivity;
         // check is sensor is working or not
 
         if(accelerometer!=null)
