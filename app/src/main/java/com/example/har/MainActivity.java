@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         // bind views
         textViewA = (TextView) findViewById(R.id.acceleroView);
-        textViewG = (TextView) findViewById(R.id.gyroView);
-        textViewM = (TextView) findViewById(R.id.magnetoView);
+        //textViewG = (TextView) findViewById(R.id.gyroView);
+        //textViewM = (TextView) findViewById(R.id.magnetoView);
 
         //binding Server IPs views and button
         IP = findViewById(R.id.ServerIp);
@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
         //taking data from all sensors
 
         if (sensormgr != null) {
-            Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
-            Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
-            Magnetometer magnet = new Magnetometer(sensormgr, textViewM, this);
+          //  Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
+           // Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
+            //Magnetometer magnet = new Magnetometer(sensormgr, textViewM, this);
         } else {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();

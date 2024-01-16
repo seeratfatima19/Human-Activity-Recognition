@@ -90,6 +90,7 @@ public class Server {
             try {
                 if (socket != null && socket.isConnected()) {
                     socket.close();
+                    showToast("Server Disconnected");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
