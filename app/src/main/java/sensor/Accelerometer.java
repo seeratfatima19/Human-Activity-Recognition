@@ -1,4 +1,4 @@
-package com.example.har;
+package sensor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -7,6 +7,9 @@ import android.hardware.SensorManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.har.DataCollection;
+import com.example.har.MainActivity;
+
 public class Accelerometer implements SensorEventListener
 {
     TextView textView;
@@ -14,11 +17,11 @@ public class Accelerometer implements SensorEventListener
     float x,y,z;
     int i = 0;
     Sensor accelerometer;
-    Accelerometer(SensorManager mgr, TextView textView, MainActivity mainActivity)
+    Accelerometer(SensorManager mgr, TextView textView)
     {
         this.textView = textView;
         this.accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        this.mainActivity = mainActivity;
+        //this.mainActivity = mainActivity;
         // check is sensor is working or not
 
         if(accelerometer!=null)
@@ -43,12 +46,7 @@ public class Accelerometer implements SensorEventListener
             y = event.values[1];
             z = event.values[2];
             textView.setText("Accelerometer vals:\n X: "+event.values[0]+"\nY: "+event.values[1]+"\nZ: "+event.values[2]);
-            i++;
-            if(i == 500){
-                i = 0;
-                DataCollection dc = new DataCollection(mainActivity);
-                dc.updateSheet(x,y,z,"Accelerometer");
-            }
+
         }
         else {
             System.out.println("Sensor type is not accelerometer");
