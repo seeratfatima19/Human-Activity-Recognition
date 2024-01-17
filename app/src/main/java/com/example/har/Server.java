@@ -20,14 +20,14 @@ public class Server {
 
     private Context mContext;
     Socket socket;
-    String SERVER_IP;
-    int SERVER_PORT=1026;
+
 
     public Server(Context context) {
         this.mContext = context;
     }
-
+    Test mythread;
     public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis) {
+
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -36,7 +36,10 @@ public class Server {
             public void onClick(View v) {
                 URI uri = null;
                 String myIP = IPtext.getText().toString();
-                new ClientTask(myIP, 1026).execute();
+                Log.d("msg", "in on click, onto create client task obj");
+                mythread = new Test();
+                mythread.start();
+                //new ClientTask(myIP, 1030).execute();
 
 
             }
@@ -47,8 +50,9 @@ public class Server {
         btndis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DisconnectTask dis = new DisconnectTask();
-                dis.execute();
+                mythread.close_conn();
+                //DisconnectTask dis = new DisconnectTask();
+                //dis.execute();
             }
         });
 
@@ -68,16 +72,22 @@ public class Server {
         @Override
         protected Void doInBackground(String... params) {
             try {
-                socket = new Socket(serverIp, serverPort);
-
+                Log.d("msg", "in do in background function, onto creating socket");
+                try {
+                    socket = new Socket("172.16.2.77", 1030);
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                    Log.e("msg", "error creating socket");
+                }
+                Log.d("msg", "socket created");
                 showToast("Connected to: "+ serverIp);
                 // Send data to the server
-                //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                //dataOutputStream.writeUTF(params[0]);
-
+                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                dataOutputStream.writeUTF("Hello world");
                 // Do not close the socket here; it will be closed on disconnect
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d("msg", "an exception occurred");
             }
 
             return null;
