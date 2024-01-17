@@ -22,7 +22,7 @@ public class PhoneSensor implements SensorEventListener {
         this.sensors= mgr.getSensorList(Sensor.TYPE_ALL);
         this.sensorManager = mgr;
         textViewAll = textView;
-//
+
         for(Sensor s: sensors){
             System.out.println(s.getName());
             if(s.getType() == Sensor.TYPE_ACCELEROMETER){

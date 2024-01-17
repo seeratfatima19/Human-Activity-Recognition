@@ -20,7 +20,7 @@ public class Magnetometer implements SensorEventListener {
     {
         this.textView = textView;
         this.magnetometer = mgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        // this.mainActivity  = mainActivity;
+        // this.mainActivity  = mainActivity
         if(magnetometer!=null)
         {
             mgr.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
