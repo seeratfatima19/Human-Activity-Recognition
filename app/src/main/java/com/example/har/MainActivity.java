@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,15 +20,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP;
-    EditText IPtext;
+    EditText IPtext, mtext;
 
     Button btnIP, btndis;
+    private Socket client;
+    private PrintWriter printwriter;
+
 
 
     SensorManager sensormgr;
@@ -46,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
-
+        mtext = findViewById(R.id.message);
 
         // sensor code ahead
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -63,11 +70,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        /*btnIP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                URI uri = null;
+                String myIP = IPtext.getText().toString();
+                new Thread(new ClientThread("Android Client Speaking")).start();
+
+
+            }
+
+        });*/
         //connecting server and disconnecting on button clicks
         //creating server object and passing context to it so it can be used to create toasts
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, mtext);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 
@@ -75,11 +93,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
 }
+
+
