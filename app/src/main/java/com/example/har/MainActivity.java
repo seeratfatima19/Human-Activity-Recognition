@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,17 +20,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
-
-import sensor.PhoneSensor;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP;
-    EditText IPtext;
+    EditText IPtext, mtext;
 
     Button btnIP, btndis;
+    private Socket client;
+    private PrintWriter printwriter;
+
 
 
     SensorManager sensormgr;
@@ -40,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         // bind views
         textViewA = (TextView) findViewById(R.id.acceleroView);
-      //  textViewG = (TextView) findViewById(R.id.gyroView);
+        //textViewG = (TextView) findViewById(R.id.gyroView);
         //textViewM = (TextView) findViewById(R.id.magnetoView);
 
         //binding Server IPs views and button
@@ -48,50 +53,46 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
-
+        mtext = findViewById(R.id.message);
 
         // sensor code ahead
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         //taking data from all sensors
-/*
+
         if (sensormgr != null) {
-            Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
-            Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
-            Magnetometer magnet = new Magnetometer(sensormgr, textViewM, this);
+          //  Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
+           // Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
+            //Magnetometer magnet = new Magnetometer(sensormgr, textViewM, this);
         } else {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
         }
-*/
 
-        if(sensormgr!=null)
-        {
-            PhoneSensor sensors = new PhoneSensor(sensormgr, textViewA);
-        }
-        else {
-            System.out.println("Sensor Manager is null");
-            Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
-        }
-        final HttpURLConnection[] urlConnection = new HttpURLConnection[1];
 
+        /*btnIP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                URI uri = null;
+                String myIP = IPtext.getText().toString();
+                new Thread(new ClientThread("Android Client Speaking")).start();
+
+
+            }
+
+        });*/
         //connecting server and disconnecting on button clicks
         //creating server object and passing context to it so it can be used to create toasts
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, urlConnection, btndis);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, mtext);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
-        //url connection is also passed and also the IP of the server (IPtext)
+        //the ip of the server is passed to it as well
 
 
     }
 
 
-
-
-
-
-
-
-
 }
+
+
