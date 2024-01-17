@@ -8,26 +8,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.os.AsyncTask;
+
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.net.UnknownHostException;
 
 
 public class Server {
 
     private Context mContext;
     Socket socket;
+    String SERVER_IP;
+    int SERVER_PORT=1026;
+
+    private Socket client;
+    private PrintWriter printwriter;
 
 
     public Server(Context context) {
         this.mContext = context;
     }
-    Test mythread;
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis) {
 
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, EditText mtext) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -36,10 +45,9 @@ public class Server {
             public void onClick(View v) {
                 URI uri = null;
                 String myIP = IPtext.getText().toString();
-                Log.d("msg", "in on click, onto create client task obj");
-                mythread = new Test();
-                mythread.start();
-                //new ClientTask(myIP, 1030).execute();
+                String message = mtext.getText().toString();
+
+                new Thread(new ClientThread(myIP, message)).start();
 
 
             }
@@ -50,9 +58,13 @@ public class Server {
         btndis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mythread.close_conn();
-                //DisconnectTask dis = new DisconnectTask();
-                //dis.execute();
+                try{
+                    showToast("Disconnected the server");
+                    client.close();
+                }
+                catch (Exception e){
+                    showToast("Server is not connected....");
+                }
             }
         });
 
@@ -61,53 +73,40 @@ public class Server {
 
 
 
-    class ClientTask extends AsyncTask<String, Void, Void> {
-        private String serverIp;
-        private int serverPort;
-
-        public ClientTask(String serverIp, int serverPort) {
-            this.serverIp = serverIp;
-            this.serverPort = serverPort;
+    class ClientThread implements Runnable {
+        private final String message;
+        private final String ip;
+        ClientThread(String ip,String message) {
+            this.ip = ip;
+            this.message = message;
         }
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                Log.d("msg", "in do in background function, onto creating socket");
-                try {
-                    socket = new Socket("172.16.2.77", 1030);
-                }
-                catch(IOException e){
-                    e.printStackTrace();
-                    Log.e("msg", "error creating socket");
-                }
-                Log.d("msg", "socket created");
-                showToast("Connected to: "+ serverIp);
-                // Send data to the server
-                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                dataOutputStream.writeUTF("Hello world");
-                // Do not close the socket here; it will be closed on disconnect
-            } catch (IOException e) {
-                Log.d("msg", "an exception occurred");
-            }
 
-            return null;
-        }
-    }
-    class DisconnectTask extends AsyncTask<Void, Void, Void> {
         @Override
-        protected Void doInBackground(Void... voids) {
-            // Disconnect tasks (e.g., close the socket)
+        public void run() {
             try {
-                if (socket != null && socket.isConnected()) {
-                    socket.close();
-                    showToast("Server Disconnected");
-                }
+                // the IP and port should be correct to have a connection established
+                // Creates a stream socket and connects it to the specified port number on the named host.
+                client = new Socket(ip, 4444);
+                // connect to server
+
+                printwriter = new PrintWriter(client.getOutputStream(), true);
+                printwriter.write(message);  // write the message to output stream
+
+                printwriter.flush();
+                printwriter.close();
+
+                // closing the connection
+                //client.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+
+
         }
     }
+    //
+
 
 
 
