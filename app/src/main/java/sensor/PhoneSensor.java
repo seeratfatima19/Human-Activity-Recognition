@@ -54,7 +54,7 @@ public class PhoneSensor implements SensorEventListener {
 
             }
             if(s.getType() == Sensor.TYPE_PROXIMITY){
-               setSensors(s);
+                setSensors(s);
             }
             if(s.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
                 setSensors(s);
@@ -139,7 +139,7 @@ public class PhoneSensor implements SensorEventListener {
             String rotationData = "Rotation Vector: \nAzimuth: " + azimuthDegrees + "\nPitch: " + pitchDegrees + "\nRoll: " + rollDegrees;
             textViewAll.setText(rotationData);
         }
-}
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
