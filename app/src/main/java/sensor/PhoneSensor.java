@@ -58,7 +58,7 @@ public class PhoneSensor implements SensorEventListener {
         }
 
     }
-
+//hello
     private void setSensors(Sensor s){
         sensorManager.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
     }
