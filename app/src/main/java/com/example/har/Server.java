@@ -105,42 +105,8 @@ public class Server {
 
         }
     }
-        class DisconnectTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // Disconnect tasks (e.g., close the socket)
-            try {
-                if (socket != null && socket.isConnected()) {
-                    socket.close();
-                    showToast("Server Disconnected");
-                }
-                else{
-                    showToast("Not connected to server");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
+    
 
-    public static void send_data(String[] args) {
-            String host = "192.168.1.9";
-            int port = 1026;
-            String data[] = {"hello", "world", "i", "am", "client"};
-
-            try (Socket socket = new Socket(host, port)) {
-                OutputStream output = socket.getOutputStream();
-                for (int i =0; i < 5; i++){
-                    output.write(data[i].getBytes());
-                }
-
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
 
 
