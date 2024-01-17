@@ -32,6 +32,15 @@ public class Magnetometer implements SensorEventListener {
         }
     }
 
+    float getX(){
+        return x;
+    }
+    float getY(){
+        return y;
+    }
+    float getZ(){
+        return z;
+    }
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
