@@ -14,7 +14,7 @@ public class Gyroscope implements SensorEventListener {
 
     TextView textView;
     MainActivity mainActivity;
-    float x,y,z;
+    float x,y,z, valueX, valueZ, valueY;
     int i= 0;
     Sensor gyroscope;
     private static final float NS2S = 1.0f / 1000000000.0f;
@@ -36,6 +36,17 @@ public class Gyroscope implements SensorEventListener {
         }
     }
 
+    float getValueX(){
+        return valueX;
+    }
+
+    float getValueY(){
+        return valueY;
+    }
+
+    float getValueZ(){
+        return valueZ;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -79,7 +90,9 @@ public class Gyroscope implements SensorEventListener {
             {
                 orientations[i] = (float) (Math.toDegrees(orientations[i]));
             }
-
+            valueX = orientations[0];
+            valueY = orientations[1];
+            valueZ = orientations[2];
             textView.setText("Gyroscope vals:\n X: "+orientations[0]+"\nY: "+orientations[1]+"\nZ: "+orientations[2]);
 
         }
