@@ -19,6 +19,8 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Server {
@@ -36,7 +38,7 @@ public class Server {
         this.mContext = context;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, EditText mtext) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, EditText mtext, ArrayList<List<Double>> sensorDataList) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -45,9 +47,9 @@ public class Server {
             public void onClick(View v) {
                 URI uri = null;
                 String myIP = IPtext.getText().toString();
-                String message = mtext.getText().toString();
+                //String message = mtext.getText().toString();
 
-                new Thread(new ClientThread(myIP, message)).start();
+                new Thread(new ClientThread(myIP, sensorDataList)).start();
 
 
             }
@@ -74,11 +76,11 @@ public class Server {
 
 
     class ClientThread implements Runnable {
-        private final String message;
+        private final ArrayList<List<Double>> data;
         private final String ip;
-        ClientThread(String ip,String message) {
+        ClientThread(String ip, ArrayList<List<Double>> data) {
             this.ip = ip;
-            this.message = message;
+            this.data = data;
         }
 
         @Override
@@ -90,7 +92,14 @@ public class Server {
                 // connect to server
 
                 printwriter = new PrintWriter(client.getOutputStream(), true);
-                printwriter.write(message);  // write the message to output stream
+                // write the message to output stream
+                for (List<Double> innerList : data) {
+                    for (Double element : innerList) {
+                        printwriter.print(element + ",");
+                    }
+                    printwriter.println(); // Move to the next line for the next inner list
+                }
+
 
                 printwriter.flush();
                 printwriter.close();

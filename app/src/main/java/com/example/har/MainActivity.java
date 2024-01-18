@@ -25,6 +25,10 @@ import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import sensor.PhoneSensor;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,33 +63,25 @@ public class MainActivity extends AppCompatActivity {
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         //taking data from all sensors
+        ArrayList<List<Double>> sensorDataList= null;
 
         if (sensormgr != null) {
-          //  Accelerometer accelerometer = new Accelerometer(sensormgr, textViewA, this);
-           // Gyroscope  gyroscope = new Gyroscope(sensormgr, textViewG, this);
-            //Magnetometer magnet = new Magnetometer(sensormgr, textViewM, this);
+            PhoneSensor sensors = new PhoneSensor(sensormgr, textViewA);
+            sensorDataList = sensors.get_all_data();
+
         } else {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
         }
 
 
-        /*btnIP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                URI uri = null;
-                String myIP = IPtext.getText().toString();
-                new Thread(new ClientThread("Android Client Speaking")).start();
 
-
-            }
-
-        });*/
         //connecting server and disconnecting on button clicks
         //creating server object and passing context to it so it can be used to create toasts
+        //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, mtext);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, mtext, sensorDataList);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 
