@@ -20,7 +20,7 @@ public class Magnetometer implements SensorEventListener {
     {
         this.textView = textView;
         this.magnetometer = mgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-       // this.mainActivity  = mainActivity;
+        // this.mainActivity  = mainActivity;
         if(magnetometer!=null)
         {
             mgr.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -32,6 +32,15 @@ public class Magnetometer implements SensorEventListener {
         }
     }
 
+    float getX(){
+        return x;
+    }
+    float getY(){
+        return y;
+    }
+    float getZ(){
+        return z;
+    }
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){

@@ -33,6 +33,18 @@ public class Accelerometer implements SensorEventListener
             Toast.makeText(textView.getContext(), "Accelerometer not found",Toast.LENGTH_SHORT).show();
         }
     }
+
+    public float getX(){
+        return x;
+    }
+
+    public float getY(){
+        return y;
+    }
+    public float getZ(){
+        return z;
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
