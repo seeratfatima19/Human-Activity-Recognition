@@ -145,4 +145,9 @@ public class PhoneSensor implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+
+    public ArrayList<List<Double>> get_all_data(){
+        return listOfSensors;
+    }
 }
