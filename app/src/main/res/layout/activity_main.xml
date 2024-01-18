@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <TextView
+        android:id="@+id/acceleroView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accelerometer"
         android:textSize="20sp"
-        android:id="@+id/acceleroView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,29 +20,69 @@
         app:layout_constraintVertical_bias="0.144" />
 
     <TextView
-        android:id="@+id/magnetoView"
+        android:id="@+id/ServerIp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Magnetometer"
-        android:textSize="20sp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="136dp"
+        android:text="Enter Server IP:"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.321" />
+        app:layout_constraintTop_toBottomOf="@+id/acceleroView"
+        app:layout_constraintVertical_bias="0.6" />
 
-    <TextView
-        android:id="@+id/gyroView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gyroscope"
-        android:textSize="20sp"
+    <EditText
+        android:id="@+id/IP"
+        android:layout_width="254dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="364dp"
+        android:layout_marginEnd="20dp"
+        android:ems="10"
+        android:inputType="textVisiblePassword"
+        android:text="Enter Your Server IP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/ServerIp"
+        app:layout_constraintTop_toBottomOf="@+id/acceleroView"
+        app:layout_constraintVertical_bias="0.114" />
+
+    <Button
+        android:id="@+id/buttonIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btndisconnect"
+        app:layout_constraintHorizontal_bias="0.816"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.562" />
+        app:layout_constraintTop_toBottomOf="@+id/ServerIp"
+        app:layout_constraintVertical_bias="0.358" />
+
+    <Button
+        android:id="@+id/btndisconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="48dp"
+        android:text="Disconnect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/IP"
+        app:layout_constraintVertical_bias="0.14" />
+
+    <EditText
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="message for server"
+        app:layout_constraintBottom_toTopOf="@+id/IP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/acceleroView"
+        app:layout_constraintVertical_bias="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
