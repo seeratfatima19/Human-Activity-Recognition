@@ -32,10 +32,10 @@ import sensor.PhoneSensor;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textViewA, textViewG,textViewM, IP;
-    EditText IPtext, mtext;
+    TextView textViewA, textViewG,textViewM, IP, textConn;
+    EditText IPtext;
 
-    Button btnIP, btndis;
+    Button btnIP, btndis, search;
     private Socket client;
     private PrintWriter printwriter;
 
@@ -48,16 +48,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // bind views
-        textViewA = (TextView) findViewById(R.id.acceleroView);
+        //textViewA = (TextView) findViewById(R.id.acceleroView);
         //textViewG = (TextView) findViewById(R.id.gyroView);
         //textViewM = (TextView) findViewById(R.id.magnetoView);
+        textConn = findViewById(R.id.connection);
 
         //binding Server IPs views and button
         IP = findViewById(R.id.ServerIp);
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
-        mtext = findViewById(R.id.message);
+
 
         // sensor code ahead
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<List<Double>> sensorDataList= null;
 
         if (sensormgr != null) {
-            PhoneSensor sensors = new PhoneSensor(sensormgr, textViewA);
+            PhoneSensor sensors = new PhoneSensor(sensormgr);
             sensorDataList = sensors.get_all_data();
 
         } else {
@@ -81,10 +82,21 @@ public class MainActivity extends AppCompatActivity {
         //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, mtext, sensorDataList);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, sensorDataList, textConn);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 
+
+
+
+        //bluetooth connections
+        search = findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search.setText("Searching...");
+            }
+        });
 
     }
 

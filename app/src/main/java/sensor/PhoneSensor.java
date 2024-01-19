@@ -12,22 +12,22 @@ import java.util.*;
 public class PhoneSensor implements SensorEventListener {
     List<Sensor> sensors;
     SensorManager sensorManager;
-    TextView textViewAll;
+    //TextView textViewAll;
 
     // List of Lists (List of Sensors to keep the values for each sensor)
     ArrayList<List<Double>> listOfSensors
             = new ArrayList<List<Double>>();
 
-    public PhoneSensor(SensorManager mgr, TextView textView){
+    public PhoneSensor(SensorManager mgr){
         this.sensors= mgr.getSensorList(Sensor.TYPE_ALL);
         this.sensorManager = mgr;
-        textViewAll = textView;
+        //textViewAll = textView;
 
         for(Sensor s: sensors){
             System.out.println(s.getName());
             if(s.getType() == Sensor.TYPE_ACCELEROMETER){
 
-                Accelerometer accelerometer = new Accelerometer(mgr, textView);
+                Accelerometer accelerometer = new Accelerometer(mgr);
                 List<Double> accelerometerList = new ArrayList<Double>();
                 accelerometerList.add((double)accelerometer.getX());
                 accelerometerList.add((double)accelerometer.getY());
@@ -36,7 +36,7 @@ public class PhoneSensor implements SensorEventListener {
 
             }
             if(s.getType() == Sensor.TYPE_GYROSCOPE){
-                Gyroscope  gyroscope = new Gyroscope(mgr, textView);
+                Gyroscope  gyroscope = new Gyroscope(mgr);
                 List<Double> gyroscopeList = new ArrayList<Double>();
                 gyroscopeList.add((double)gyroscope.getValueX());
                 gyroscopeList.add((double)gyroscope.getValueY());
@@ -45,7 +45,7 @@ public class PhoneSensor implements SensorEventListener {
 
             }
             if(s.getType() == Sensor.TYPE_MAGNETIC_FIELD){
-                Magnetometer magnet = new Magnetometer(mgr, textView);
+                Magnetometer magnet = new Magnetometer(mgr);
                 List<Double> magnetList = new ArrayList<Double>();
                 magnetList.add((double)magnet.getX());
                 magnetList.add((double)magnet.getY());
@@ -84,7 +84,7 @@ public class PhoneSensor implements SensorEventListener {
             float distanceValue = event.values[0];
             proximityList.add((double) distanceValue);
             listOfSensors.add(proximityList);
-            textViewAll.setText("Proximity Value: " + distanceValue);
+            //textViewAll.setText("Proximity Value: " + distanceValue);
         }
 
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
@@ -95,7 +95,7 @@ public class PhoneSensor implements SensorEventListener {
             linearAccList.add((double)values[1]);
             linearAccList.add((double)values[2]);
             listOfSensors.add(linearAccList);
-            textViewAll.setText(accelerationData);
+            //textViewAll.setText(accelerationData);
         }
 
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
@@ -103,7 +103,7 @@ public class PhoneSensor implements SensorEventListener {
             float stepCount = event.values[0];
             stepCounterList.add((double) stepCount);
             listOfSensors.add(stepCounterList);
-            textViewAll.setText("Step Count: " + stepCount);
+            //textViewAll.setText("Step Count: " + stepCount);
         }
 
         if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
@@ -114,7 +114,7 @@ public class PhoneSensor implements SensorEventListener {
             gravityList.add((double)values[1]);
             gravityList.add((double)values[2]);
             listOfSensors.add(gravityList);
-            textViewAll.setText(gravityData);
+            //textViewAll.setText(gravityData);
 
         }
 
@@ -137,7 +137,7 @@ public class PhoneSensor implements SensorEventListener {
             rotationVectorList.add((double)rollDegrees);
             listOfSensors.add(rotationVectorList);
             String rotationData = "Rotation Vector: \nAzimuth: " + azimuthDegrees + "\nPitch: " + pitchDegrees + "\nRoll: " + rollDegrees;
-            textViewAll.setText(rotationData);
+            //textViewAll.setText(rotationData);
         }
     }
 
