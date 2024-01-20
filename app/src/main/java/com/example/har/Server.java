@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.os.AsyncTask;
 
@@ -38,7 +39,7 @@ public class Server {
         this.mContext = context;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, EditText mtext, ArrayList<List<Double>> sensorDataList) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, ArrayList<List<Double>> sensorDataList, TextView textconn) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -50,6 +51,8 @@ public class Server {
                 //String message = mtext.getText().toString();
 
                 new Thread(new ClientThread(myIP, sensorDataList)).start();
+
+                textconn.setText("Connected");
 
 
             }
