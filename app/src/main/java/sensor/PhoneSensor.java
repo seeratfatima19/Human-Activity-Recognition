@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.*;
-
+import com.example.har.Server;
 public class PhoneSensor implements SensorEventListener {
     List<Sensor> sensors;
     SensorManager sensorManager;
@@ -139,6 +139,8 @@ public class PhoneSensor implements SensorEventListener {
             String rotationData = "Rotation Vector: \nAzimuth: " + azimuthDegrees + "\nPitch: " + pitchDegrees + "\nRoll: " + rollDegrees;
             //textViewAll.setText(rotationData);
         }
+        Server s = new Server();
+        s.write_to_server(listOfSensors);
     }
 
     @Override
@@ -147,7 +149,5 @@ public class PhoneSensor implements SensorEventListener {
     }
 
 
-    public ArrayList<List<Double>> get_all_data(){
-        return listOfSensors;
-    }
+
 }

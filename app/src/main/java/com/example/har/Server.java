@@ -34,12 +34,15 @@ public class Server {
     private Socket client;
     private PrintWriter printwriter;
 
+    public Server(){
 
+    }
     public Server(Context context) {
         this.mContext = context;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, ArrayList<List<Double>> sensorDataList, TextView textconn) {
+
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -50,7 +53,8 @@ public class Server {
                 String myIP = IPtext.getText().toString();
                 //String message = mtext.getText().toString();
 
-                new Thread(new ClientThread(myIP, sensorDataList)).start();
+                new Thread(new ClientThread(myIP)).start();
+
 
                 textconn.setText("Connected");
 
@@ -65,6 +69,8 @@ public class Server {
             public void onClick(View v) {
                 try{
                     showToast("Disconnected the server");
+                    printwriter.flush();
+                    printwriter.close();
                     client.close();
                 }
                 catch (Exception e){
@@ -73,17 +79,33 @@ public class Server {
             }
         });
 
+
+
+
+    }
+
+    public void write_to_server(ArrayList<List<Double>> myList){
+
+        if(client != null){
+            for (List<Double> innerList : myList) {
+                for (Double element : innerList) {
+                    printwriter.print(element + ",");
+                }
+                printwriter.println(); // Move to the next line for the next inner list
+            }
+        }
+
     }
 
 
 
 
     class ClientThread implements Runnable {
-        private final ArrayList<List<Double>> data;
+       // private final ArrayList<List<Double>> data;
         private final String ip;
-        ClientThread(String ip, ArrayList<List<Double>> data) {
+        ClientThread(String ip) {
             this.ip = ip;
-            this.data = data;
+            //this.data = data;
         }
 
         @Override
@@ -95,17 +117,20 @@ public class Server {
                 // connect to server
 
                 printwriter = new PrintWriter(client.getOutputStream(), true);
+                showToast("Server Connected");
                 // write the message to output stream
-                for (List<Double> innerList : data) {
-                    for (Double element : innerList) {
-                        printwriter.print(element + ",");
-                    }
-                    printwriter.println(); // Move to the next line for the next inner list
-                }
+
+                //write_to_server(data);
+                //for (List<Double> innerList : data) {
+                  //  for (Double element : innerList) {
+                    //    printwriter.print(element + ",");
+                    //}
+                    //printwriter.println(); // Move to the next line for the next inner list
+                //}
 
 
-                printwriter.flush();
-                printwriter.close();
+               // printwriter.flush();
+                //printwriter.close();
 
                 // closing the connection
                 //client.close();

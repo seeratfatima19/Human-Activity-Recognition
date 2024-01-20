@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             //class to get data from the sensors
             PhoneSensor sensors = new PhoneSensor(sensormgr);
             //this function returns data of all sensors in a list of lists
-            sensorDataList = sensors.get_all_data();
+            //sensorDataList = sensors.get_all_data();
 
         } else {
             System.out.println("Sensor Manager is null");
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, sensorDataList, textConn);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 
