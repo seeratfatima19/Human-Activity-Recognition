@@ -46,7 +46,7 @@ import sensor.WatchSensor;
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP, textConn;
-    EditText IPtext;
+    EditText IPtext, UserId;
 
     Button btnIP, btndis, search;
     private Socket client;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
-
+        UserId = findViewById(R.id.UserId);
 
         // sensor code ahead
          sensormgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn, UserId);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 
