@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.os.AsyncTask;
 
@@ -20,8 +19,6 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Server {
@@ -39,7 +36,7 @@ public class Server {
         this.mContext = context;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, ArrayList<List<Double>> sensorDataList, TextView textconn) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, EditText mtext) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -48,11 +45,9 @@ public class Server {
             public void onClick(View v) {
                 URI uri = null;
                 String myIP = IPtext.getText().toString();
-                //String message = mtext.getText().toString();
+                String message = mtext.getText().toString();
 
-                new Thread(new ClientThread(myIP, sensorDataList)).start();
-
-                textconn.setText("Connected");
+                new Thread(new ClientThread(myIP, message)).start();
 
 
             }
@@ -79,11 +74,11 @@ public class Server {
 
 
     class ClientThread implements Runnable {
-        private final ArrayList<List<Double>> data;
+        private final String message;
         private final String ip;
-        ClientThread(String ip, ArrayList<List<Double>> data) {
+        ClientThread(String ip,String message) {
             this.ip = ip;
-            this.data = data;
+            this.message = message;
         }
 
         @Override
@@ -95,14 +90,7 @@ public class Server {
                 // connect to server
 
                 printwriter = new PrintWriter(client.getOutputStream(), true);
-                // write the message to output stream
-                for (List<Double> innerList : data) {
-                    for (Double element : innerList) {
-                        printwriter.print(element + ",");
-                    }
-                    printwriter.println(); // Move to the next line for the next inner list
-                }
-
+                printwriter.write(message);  // write the message to output stream
 
                 printwriter.flush();
                 printwriter.close();
