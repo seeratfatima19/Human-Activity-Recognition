@@ -7,21 +7,29 @@ import android.hardware.SensorManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.*;
 import com.example.har.Server;
 public class PhoneSensor implements SensorEventListener {
     List<Sensor> sensors;
+    Server s;
     SensorManager sensorManager;
+    PrintWriter printwriter;
+     Socket client;
     //TextView textViewAll;
 
     // List of Lists (List of Sensors to keep the values for each sensor)
     ArrayList<List<Double>> listOfSensors
             = new ArrayList<List<Double>>();
 
-    public PhoneSensor(SensorManager mgr){
+    public PhoneSensor(SensorManager mgr, Socket client, PrintWriter printwriter){
         this.sensors= mgr.getSensorList(Sensor.TYPE_ALL);
         this.sensorManager = mgr;
+        this.client = client;
+        this.printwriter = printwriter;
         //textViewAll = textView;
+        s = new Server();
 
         for(Sensor s: sensors){
             System.out.println(s.getName());
@@ -139,9 +147,11 @@ public class PhoneSensor implements SensorEventListener {
             String rotationData = "Rotation Vector: \nAzimuth: " + azimuthDegrees + "\nPitch: " + pitchDegrees + "\nRoll: " + rollDegrees;
             //textViewAll.setText(rotationData);
         }
-        Server s = new Server();
-        s.write_to_server(listOfSensors);
+
+        s.write_to_server(listOfSensors, client, printwriter);
     }
+
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

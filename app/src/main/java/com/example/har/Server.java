@@ -2,6 +2,7 @@ package com.example.har;
 
 import android.content.Context;
 
+import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,16 +24,19 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sensor.PhoneSensor;
+
 
 public class Server {
 
     private Context mContext;
-    Socket socket;
     String SERVER_IP;
-    int SERVER_PORT=1026;
+   // int SERVER_PORT=1026;
 
     private Socket client;
     private PrintWriter printwriter;
+
+    SensorManager sm=null;
 
     public Server(){
 
@@ -42,9 +46,9 @@ public class Server {
     }
 
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, SensorManager sm) {
         //this connects and disconnects app on button press
-
+        this.sm = sm;
         //this is button for connecting
         btnIP.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +88,7 @@ public class Server {
 
     }
 
-    public void write_to_server(ArrayList<List<Double>> myList){
+    public void write_to_server(ArrayList<List<Double>> myList, Socket client, PrintWriter printwriter){
 
         if(client != null){
             for (List<Double> innerList : myList) {
@@ -118,6 +122,8 @@ public class Server {
 
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 showToast("Server Connected");
+                PhoneSensor ps = new PhoneSensor(sm, client, printwriter);
+
                 // write the message to output stream
 
                 //write_to_server(data);
