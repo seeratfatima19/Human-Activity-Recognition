@@ -7,29 +7,23 @@ import android.hardware.SensorManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.*;
 import com.example.har.Server;
 public class PhoneSensor implements SensorEventListener {
     List<Sensor> sensors;
-    Server s;
     SensorManager sensorManager;
-    PrintWriter printwriter;
-     Socket client;
     //TextView textViewAll;
+    static String str;
 
     // List of Lists (List of Sensors to keep the values for each sensor)
     ArrayList<List<Double>> listOfSensors
             = new ArrayList<List<Double>>();
 
-    public PhoneSensor(SensorManager mgr, Socket client, PrintWriter printwriter){
+    public PhoneSensor(SensorManager mgr){
         this.sensors= mgr.getSensorList(Sensor.TYPE_ALL);
         this.sensorManager = mgr;
-        this.client = client;
-        this.printwriter = printwriter;
+        this.str = "";
         //textViewAll = textView;
-        s = new Server();
 
         for(Sensor s: sensors){
             System.out.println(s.getName());
@@ -40,6 +34,7 @@ public class PhoneSensor implements SensorEventListener {
                 accelerometerList.add((double)accelerometer.getX());
                 accelerometerList.add((double)accelerometer.getY());
                 accelerometerList.add((double)accelerometer.getZ());
+                str += accelerometer.getX() + "," + accelerometer.getY() + "," + accelerometer.getZ() + ",";
                 listOfSensors.add(accelerometerList);
 
             }
@@ -49,6 +44,7 @@ public class PhoneSensor implements SensorEventListener {
                 gyroscopeList.add((double)gyroscope.getValueX());
                 gyroscopeList.add((double)gyroscope.getValueY());
                 gyroscopeList.add((double)gyroscope.getValueZ());
+                str += gyroscope.getValueX() + ", " + gyroscope.getValueY() + ", " + gyroscope.getValueZ() + ", ";
                 listOfSensors.add(gyroscopeList);
 
             }
@@ -58,6 +54,7 @@ public class PhoneSensor implements SensorEventListener {
                 magnetList.add((double)magnet.getX());
                 magnetList.add((double)magnet.getY());
                 magnetList.add((double)magnet.getZ());
+                str += magnet.getX() + "," + magnet.getY() + "," + magnet.getZ() + ",";
                 listOfSensors.add(magnetList);
 
             }
@@ -87,9 +84,12 @@ public class PhoneSensor implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
 
+        float distanceValue = 0.0F;
+        String acceleration = "", gravityData = "", rotationData = "";
+        float stepCount = 0.0F;
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             List<Double> proximityList = new ArrayList<Double>();
-            float distanceValue = event.values[0];
+            distanceValue = event.values[0];
             proximityList.add((double) distanceValue);
             listOfSensors.add(proximityList);
             //textViewAll.setText("Proximity Value: " + distanceValue);
@@ -98,7 +98,7 @@ public class PhoneSensor implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             List<Double> linearAccList = new ArrayList<Double>();
             float[] values = event.values;
-            String accelerationData = "Linear Acceleration:\n X: " + values[0] + "\nY: " + values[1] + "\nZ: " + values[2];
+            acceleration = values[0] + "," + values[1] + "," + values[2];
             linearAccList.add((double)values[0]);
             linearAccList.add((double)values[1]);
             linearAccList.add((double)values[2]);
@@ -108,7 +108,7 @@ public class PhoneSensor implements SensorEventListener {
 
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             List<Double> stepCounterList = new ArrayList<Double>();
-            float stepCount = event.values[0];
+            stepCount = event.values[0];
             stepCounterList.add((double) stepCount);
             listOfSensors.add(stepCounterList);
             //textViewAll.setText("Step Count: " + stepCount);
@@ -117,7 +117,7 @@ public class PhoneSensor implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
             List<Double> gravityList = new ArrayList<Double>();
             float[] values = event.values;
-            String gravityData = "Gravity: \n X: " + values[0] + "\nY: " + values[1] + "\nZ: " + values[2];
+            gravityData = values[0] + "," + values[1] + "," + values[2];
             gravityList.add((double)values[0]);
             gravityList.add((double)values[1]);
             gravityList.add((double)values[2]);
@@ -144,20 +144,23 @@ public class PhoneSensor implements SensorEventListener {
             rotationVectorList.add((double)pitchDegrees);
             rotationVectorList.add((double)rollDegrees);
             listOfSensors.add(rotationVectorList);
-            String rotationData = "Rotation Vector: \nAzimuth: " + azimuthDegrees + "\nPitch: " + pitchDegrees + "\nRoll: " + rollDegrees;
+            rotationData = azimuthDegrees + "," + pitchDegrees + "," + rollDegrees;
             //textViewAll.setText(rotationData);
         }
+        //Server s = new Server();
+        //s.write_to_server(listOfSensors);
 
-        s.write_to_server(listOfSensors, client, printwriter);
+        str = distanceValue + "," + acceleration + "," + gravityData + "," + rotationData + "," +stepCount + ",";
     }
-
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
+    public static String getString(){
+        return str;
+    }
 
 
 }

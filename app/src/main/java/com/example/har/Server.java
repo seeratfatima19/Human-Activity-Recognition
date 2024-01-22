@@ -2,25 +2,16 @@ package com.example.har;
 
 import android.content.Context;
 
-import android.hardware.SensorManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.AsyncTask;
 
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +21,12 @@ import sensor.PhoneSensor;
 public class Server {
 
     private Context mContext;
+    Socket socket;
     String SERVER_IP;
-   // int SERVER_PORT=1026;
-
+    int SERVER_PORT=1026;
+    private static boolean check;
     private Socket client;
     private PrintWriter printwriter;
-
-    SensorManager sm=null;
 
     public Server(){
 
@@ -45,10 +35,13 @@ public class Server {
         this.mContext = context;
     }
 
+    public static boolean check_f(){
+        return check;
+    }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, SensorManager sm) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, EditText UserId) {
         //this connects and disconnects app on button press
-        this.sm = sm;
+
         //this is button for connecting
         btnIP.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,11 +49,13 @@ public class Server {
                 URI uri = null;
                 String myIP = IPtext.getText().toString();
                 //String message = mtext.getText().toString();
-
-                new Thread(new ClientThread(myIP)).start();
-
+                check = true;
 
                 textconn.setText("Connected");
+                String userid = UserId.getText().toString();
+                new Thread(new ClientThread(myIP, userid)).start();
+
+
 
 
             }
@@ -73,6 +68,7 @@ public class Server {
             public void onClick(View v) {
                 try{
                     showToast("Disconnected the server");
+                    check = false;
                     printwriter.flush();
                     printwriter.close();
                     client.close();
@@ -88,7 +84,7 @@ public class Server {
 
     }
 
-    public void write_to_server(ArrayList<List<Double>> myList, Socket client, PrintWriter printwriter){
+    public void write_to_server(ArrayList<List<Double>> myList){
 
         if(client != null){
             for (List<Double> innerList : myList) {
@@ -107,8 +103,10 @@ public class Server {
     class ClientThread implements Runnable {
        // private final ArrayList<List<Double>> data;
         private final String ip;
-        ClientThread(String ip) {
+        private final String UserId;
+        ClientThread(String ip, String UserId) {
             this.ip = ip;
+            this.UserId = UserId;
             //this.data = data;
         }
 
@@ -119,11 +117,15 @@ public class Server {
                 // Creates a stream socket and connects it to the specified port number on the named host.
                 client = new Socket(ip, 4444);
                 // connect to server
-
                 printwriter = new PrintWriter(client.getOutputStream(), true);
-                showToast("Server Connected");
-                PhoneSensor ps = new PhoneSensor(sm, client, printwriter);
-
+                printwriter.print(UserId);
+                while(true){
+                    if(check_f() == false){
+                        break;
+                    }
+                    String s = PhoneSensor.getString();
+                    printwriter.print(s);
+                }
                 // write the message to output stream
 
                 //write_to_server(data);
@@ -135,8 +137,8 @@ public class Server {
                 //}
 
 
-               // printwriter.flush();
-                //printwriter.close();
+                printwriter.flush();
+                printwriter.close();
 
                 // closing the connection
                 //client.close();
