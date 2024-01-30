@@ -12,14 +12,14 @@ import com.example.har.MainActivity;
 
 public class Accelerometer implements SensorEventListener
 {
-    TextView textView;
+    //TextView textView;
     MainActivity mainActivity;
     float x,y,z;
     int i = 0;
     Sensor accelerometer;
-    Accelerometer(SensorManager mgr, TextView textView)
+    Accelerometer(SensorManager mgr)
     {
-        this.textView = textView;
+        //this.textView = textView;
         this.accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         //this.mainActivity = mainActivity;
         // check is sensor is working or not
@@ -30,9 +30,21 @@ public class Accelerometer implements SensorEventListener
         }
         else {
 
-            Toast.makeText(textView.getContext(), "Accelerometer not found",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(textView.getContext(), "Accelerometer not found",Toast.LENGTH_SHORT).show();
         }
     }
+
+    public float getX(){
+        return x;
+    }
+
+    public float getY(){
+        return y;
+    }
+    public float getZ(){
+        return z;
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -45,7 +57,7 @@ public class Accelerometer implements SensorEventListener
             x = event.values[0];
             y = event.values[1];
             z = event.values[2];
-            textView.setText("Accelerometer vals:\n X: "+event.values[0]+"\nY: "+event.values[1]+"\nZ: "+event.values[2]);
+            //textView.setText("Accelerometer vals:\n X: "+event.values[0]+"\nY: "+event.values[1]+"\nZ: "+event.values[2]);
 
         }
         else {

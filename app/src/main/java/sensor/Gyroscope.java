@@ -12,17 +12,17 @@ import com.example.har.MainActivity;
 
 public class Gyroscope implements SensorEventListener {
 
-    TextView textView;
+    //TextView textView;
     MainActivity mainActivity;
-    float x,y,z;
+    float x,y,z, valueX, valueZ, valueY;
     int i= 0;
     Sensor gyroscope;
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private final float[] deltaRotationVector = new float[4];
-    Gyroscope(SensorManager mgr, TextView textView)
+    Gyroscope(SensorManager mgr)
     {
-        this.textView = textView;
+        //this.textView = textView;
         this.gyroscope = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         //this.mainActivity = mainActivity;
         if(gyroscope!=null)
@@ -31,11 +31,22 @@ public class Gyroscope implements SensorEventListener {
         }
         else {
 
-            Toast.makeText(textView.getContext(), "Gyroscope not found",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(textView.getContext(), "Gyroscope not found",Toast.LENGTH_SHORT).show();
             System.out.println("Gyroscope not found");
         }
     }
 
+    float getValueX(){
+        return valueX;
+    }
+
+    float getValueY(){
+        return valueY;
+    }
+
+    float getValueZ(){
+        return valueZ;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -79,8 +90,10 @@ public class Gyroscope implements SensorEventListener {
             {
                 orientations[i] = (float) (Math.toDegrees(orientations[i]));
             }
-
-            textView.setText("Gyroscope vals:\n X: "+orientations[0]+"\nY: "+orientations[1]+"\nZ: "+orientations[2]);
+            valueX = orientations[0];
+            valueY = orientations[1];
+            valueZ = orientations[2];
+            //textView.setText("Gyroscope vals:\n X: "+orientations[0]+"\nY: "+orientations[1]+"\nZ: "+orientations[2]);
 
         }
         else {
