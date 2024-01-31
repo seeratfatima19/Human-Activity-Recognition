@@ -225,11 +225,11 @@
 
     <EditText
         android:id="@+id/UserId"
-        android:layout_width="91dp"
-        android:layout_height="32dp"
+        android:layout_width="85dp"
+        android:layout_height="57dp"
         android:ems="10"
-        android:inputType="text"
         android:hint="User ID"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/IP"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView3"
