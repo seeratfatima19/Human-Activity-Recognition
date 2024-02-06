@@ -4,11 +4,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.IntentFilter;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
     private Socket client;
     private PrintWriter printwriter;
     BluetoothAdapter bt;
-
+    // seerat
+    private BluetoothLeScanner bluetoothLeScanner;
+    private boolean scanning;
+    private Handler handler = new Handler();
     private static final int REQUEST_ENABLE_BT = 1;
 
     SensorManager sensormgr;
@@ -61,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //checking api level
+        int apiLevel = Build.VERSION.SDK_INT;
+        Log.d("MyApp", "API Level: " + apiLevel);
         // bind views
 
         textConn = findViewById(R.id.connection);
@@ -118,30 +128,36 @@ public class MainActivity extends AppCompatActivity {
                     // Prompt user to enable Bluetooth
                     try {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     }
                     catch (SecurityException e){
                         //catch exception
                     }
 
                 }
-                //Watch sensor class object which on receceiving a device will connect to it
-                WatchSensor receiver = new WatchSensor(bt);
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 
-                registerReceiver(receiver, filter);
 
-                // Start discovery
-                try {
-                    bt.startDiscovery();
-                }
-                catch (SecurityException e){
-                    Log.d("error", "security exception");
-                }
-                //SmartwatchSensorData sensorData = smartwatchSdk.getSensorData();
             }
         });
 
+    }
+
+    private void scanLeDevice() {
+        if (!scanning) {
+            // Stops scanning after a predefined scan period.
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scanning = false;
+                    bluetoothLeScanner.stopScan(leScanCallback);
+                }
+            }, SCAN_PERIOD);
+
+            scanning = true;
+            bluetoothLeScanner.startScan(leScanCallback);
+        } else {
+            scanning = false;
+            bluetoothLeScanner.stopScan(leScanCallback);
+        }
     }
 
 
