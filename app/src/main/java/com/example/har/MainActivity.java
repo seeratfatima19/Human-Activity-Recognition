@@ -1,11 +1,16 @@
 package com.example.har;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
@@ -22,6 +27,8 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -40,9 +47,14 @@ import java.util.List;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 
-import sensor.WatchSensor;
+
 import sensor.PhoneSensor;
 import sensor.WatchSensor;
 
@@ -54,13 +66,26 @@ public class MainActivity extends AppCompatActivity {
     Button btnIP, btndis, search;
     private Socket client;
     private PrintWriter printwriter;
-    BluetoothAdapter bt;
+    BluetoothAdapter mBluetoothAdapter;
     // seerat
     private BluetoothLeScanner bluetoothLeScanner;
     private boolean scanning;
     private Handler handler = new Handler();
     private static final int REQUEST_ENABLE_BT = 1;
+    // Stops scanning after 20 seconds.
+    private static final long SCAN_PERIOD = 20000;
+    private LeDeviceListAdapter leDeviceListAdapter = new LeDeviceListAdapter();
 
+    // Device scan callback.
+    private ScanCallback leScanCallback =
+            new ScanCallback() {
+                @Override
+                public void onScanResult(int callbackType, ScanResult result) {
+                    super.onScanResult(callbackType, result);
+                    leDeviceListAdapter.addDevice(result.getDevice());
+                    leDeviceListAdapter.notifyDataSetChanged();
+                }
+            };
     SensorManager sensormgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 search.setText("Searching...");
 
                 //creating bluetooth adapter
-                bt = BluetoothAdapter.getDefaultAdapter();
-                if(bt == null || !bt.isEnabled())
+                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
                 {
                     // Prompt user to enable Bluetooth
                     try {
@@ -136,11 +161,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
+
+
             }
         });
 
     }
 
+    @SuppressLint("MissingPermission")
     private void scanLeDevice() {
         if (!scanning) {
             // Stops scanning after a predefined scan period.
