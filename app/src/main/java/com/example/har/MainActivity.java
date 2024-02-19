@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.SensorListener;
@@ -29,6 +30,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -54,16 +57,18 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
-
+import bluetooth.MyGattCallback;
 import sensor.PhoneSensor;
 import sensor.WatchSensor;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP, textConn;
     EditText IPtext, UserId;
 
-    Button btnIP, btndis, search;
+    Button btnIP, btndis, searchButton;
     private Socket client;
     private PrintWriter printwriter;
     BluetoothAdapter mBluetoothAdapter;
@@ -71,21 +76,12 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothLeScanner bluetoothLeScanner;
     private boolean scanning;
     private Handler handler = new Handler();
+    private BleDeviceAdapter bleDeviceAdapter;
+    private List<BluetoothDevice> devices = new ArrayList<>();
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 20 seconds.
     private static final long SCAN_PERIOD = 20000;
-    private LeDeviceListAdapter leDeviceListAdapter = new LeDeviceListAdapter();
-
-    // Device scan callback.
-    private ScanCallback leScanCallback =
-            new ScanCallback() {
-                @Override
-                public void onScanResult(int callbackType, ScanResult result) {
-                    super.onScanResult(callbackType, result);
-                    leDeviceListAdapter.addDevice(result.getDevice());
-                    leDeviceListAdapter.notifyDataSetChanged();
-                }
-            };
+    private MyGattCallback myGattCallback;
     SensorManager sensormgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,16 +134,61 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        // this is bluetooth code written by seerat. Anyone who touches it without
+        // her permission will be cursed by the gods. Amen.
+        
+
+        //creating bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        bleDeviceAdapter = new BleDeviceAdapter(this, devices, myGattCallback);
+        recyclerView.setAdapter(bleDeviceAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         //bluetooth connections
-        search = findViewById(R.id.search);
+        searchButton = findViewById(R.id.search);
+
+
         //if search for device button is pressed then:
-        search.setOnClickListener(new View.OnClickListener() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint({"MissingPermission", "NewApi"})
             @Override
             public void onClick(View v) {
-                search.setText("Searching...");
+                searchButton.setText("Searching...");
+                devices.clear();
+                bleDeviceAdapter.updateDevices(devices);
+                BluetoothLeScanner  bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+                ScanSettings settings = new ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+                bluetoothLeScanner.startScan(null, settings, new ScanCallback() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onScanResult(int callbackType, ScanResult result) {
+                        BluetoothDevice device = result.getDevice();
+                        if (!devices.contains(device)) {
+                            devices.add(device);
+                            bleDeviceAdapter.notifyItemInserted(devices.size() - 1);
+                        }
+                    }
 
-                //creating bluetooth adapter
-                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    @Override
+                    public void onBatchScanResults(List<ScanResult> results) {
+                        for (ScanResult result : results) {
+                            BluetoothDevice device = result.getDevice();
+                            if (!devices.contains(device)) {
+                                devices.add(device);
+                                bleDeviceAdapter.notifyItemInserted(devices.size() - 1);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onScanFailed(int errorCode) {
+                        Log.e("BLE", "Scan failed with error code: " + errorCode);
+                    }
+                });
+/*
                 if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
                 {
                     // Prompt user to enable Bluetooth
@@ -160,32 +201,12 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-
+*/
 
 
             }
         });
 
-    }
-
-    @SuppressLint("MissingPermission")
-    private void scanLeDevice() {
-        if (!scanning) {
-            // Stops scanning after a predefined scan period.
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    scanning = false;
-                    bluetoothLeScanner.stopScan(leScanCallback);
-                }
-            }, SCAN_PERIOD);
-
-            scanning = true;
-            bluetoothLeScanner.startScan(leScanCallback);
-        } else {
-            scanning = false;
-            bluetoothLeScanner.stopScan(leScanCallback);
-        }
     }
 
 
