@@ -8,17 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.bluetooth.BluetoothGatt;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import bluetooth.MyGattCallback;
 public class BleDeviceAdapter extends RecyclerView.Adapter<BleDeviceAdapter.BleDeviceViewHolder> {
     private List<BluetoothDevice> bleDevices;
     private Context context;
+    private MyGattCallback callback;
 
-    public BleDeviceAdapter(Context context, List<BluetoothDevice> bleDevices) {
+    public BleDeviceAdapter(Context context, List<BluetoothDevice> bleDevices, MyGattCallback callback) {
         this.context = context;
         this.bleDevices = bleDevices;
+        this.callback = callback;
     }
 
     public void updateDevices(List<BluetoothDevice> devices) {
@@ -47,10 +51,21 @@ public class BleDeviceAdapter extends RecyclerView.Adapter<BleDeviceAdapter.BleD
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onBindViewHolder(@NonNull BleDeviceViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BleDeviceViewHolder holder, @SuppressLint("RecyclerView") int position) {
         BluetoothDevice device = bleDevices.get(position);
         holder.deviceNameTextView.setText(device.getName());
         holder.deviceAddressTextView.setText(device.getAddress());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Connect to the selected device
+                Log.d("BLE Adapter","Device selected");
+                BluetoothDevice device = bleDevices.get(position);
+                MyGattCallback myGattCallback = new MyGattCallback(context, device);
+                BluetoothGatt gatt = device.connectGatt(context, false, myGattCallback);
+            }
+        });
     }
 
     @Override

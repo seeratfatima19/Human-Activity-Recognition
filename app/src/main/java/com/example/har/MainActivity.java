@@ -57,9 +57,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
-
+import bluetooth.MyGattCallback;
 import sensor.PhoneSensor;
 import sensor.WatchSensor;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 20 seconds.
     private static final long SCAN_PERIOD = 20000;
+    private MyGattCallback myGattCallback;
     SensorManager sensormgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,13 +134,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // this is bluetooth code written by seerat. Anyone who touches it without her permission
-        // will be cursed by the gods
+        // this is bluetooth code written by seerat. Anyone who touches it without
+        // her permission will be cursed by the gods. Amen.
+        
 
         //creating bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        bleDeviceAdapter = new BleDeviceAdapter(this, devices);
+        bleDeviceAdapter = new BleDeviceAdapter(this, devices, myGattCallback);
         recyclerView.setAdapter(bleDeviceAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -147,13 +151,12 @@ public class MainActivity extends AppCompatActivity {
 
         //if search for device button is pressed then:
         searchButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("MissingPermission")
+            @SuppressLint({"MissingPermission", "NewApi"})
             @Override
             public void onClick(View v) {
                 searchButton.setText("Searching...");
                 devices.clear();
                 bleDeviceAdapter.updateDevices(devices);
-
                 BluetoothLeScanner  bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 ScanSettings settings = new ScanSettings.Builder()
                         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
