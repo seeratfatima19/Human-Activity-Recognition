@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textViewA, textViewG,textViewM, IP, textConn;
     EditText IPtext, UserId;
 
-    Button btnIP, btndis, search;
+    Button btnIP, btndis, search, btnSensorList;
     private Socket client;
     private PrintWriter printwriter;
     BluetoothAdapter bt;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
+        btnSensorList = findViewById(R.id.sensorListButton);
         UserId = findViewById(R.id.UserId);
 
         // sensor code ahead
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (sensormgr != null) {
             //class to get data from the sensors
-            PhoneSensor sensors = new PhoneSensor(sensormgr);
+            PhoneSensor sensors = new PhoneSensor(sensormgr, btnSensorList, this);
             //this function returns data of all sensors in a list of lists
             //sensorDataList = sensors.get_all_data();
 
