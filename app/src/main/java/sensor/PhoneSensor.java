@@ -29,7 +29,7 @@ public class PhoneSensor implements SensorEventListener {
     static String str;
 
     List<Sensor> implementedSensors = new ArrayList<>();
-    int byteSensors[] = {0,0,0,0,0,0,0,0};
+    static int byteSensors[] = {0,0,0,0,0,0,0,0};
     Context context;
 
     List<CheckBox> checkBoxList = new ArrayList<>();
@@ -310,5 +310,9 @@ public class PhoneSensor implements SensorEventListener {
         return str;
     }
 
+    public static String getByteSensors(){
+        String stringActiveSensorList = String.join(",", Arrays.toString(byteSensors));
+        return stringActiveSensorList;
+    }
 
 }

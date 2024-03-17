@@ -107,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
-        start = findViewById(R.id.startdata);
-        stop = findViewById(R.id.stopdata);
+       //start = findViewById(R.id.startdata);
+       //stop = findViewById(R.id.stopdata);
         btnSensorList = findViewById(R.id.sensorListButton);
         UserId = findViewById(R.id.UserId);
 
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn, UserId, start, stop);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn, UserId);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 

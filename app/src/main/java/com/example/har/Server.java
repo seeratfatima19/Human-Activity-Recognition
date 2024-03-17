@@ -44,7 +44,7 @@ public class Server {
         return sendData;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, EditText UserId, Button start, Button stop) {
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, EditText UserId) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -85,24 +85,6 @@ public class Server {
         });
 
 
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showToast("Started Sending Data");
-                sendData = true;
-            }
-        });
-
-        stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendData = false;
-            }
-        });
-
-
-
-
     }
 
     public void write_to_server(ArrayList<List<Double>> myList){
@@ -140,14 +122,15 @@ public class Server {
                 // connect to server
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 printwriter.print(UserId);
+                String sensorList = PhoneSensor.getByteSensors();
+                printwriter.print(sensorList);
                 while(true){
                     if(check_f() == false){
                         break;
                     }
                     String s = PhoneSensor.getString();
-                    if(checkData() == true) {
-                        printwriter.print(s);
-                    }
+                    printwriter.print(s);
+
                 }
                 // write the message to output stream
 
