@@ -1,14 +1,23 @@
 package com.example.har;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +28,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,30 +50,52 @@ import java.util.List;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 
-import sensor.WatchSensor;
+import bluetooth.MyGattCallback;
 import sensor.PhoneSensor;
 import sensor.WatchSensor;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewA, textViewG,textViewM, IP, textConn;
     EditText IPtext, UserId;
 
-    Button btnIP, btndis, search;
+
+    Button btnIP, btndis, search, btnSensorList;
+
+    //Button btnIP, btndis, searchButton;
+
     private Socket client;
     private PrintWriter printwriter;
-    BluetoothAdapter bt;
-
+    BluetoothAdapter mBluetoothAdapter;
+    // seerat
+    private BluetoothLeScanner bluetoothLeScanner;
+    private boolean scanning;
+    private Handler handler = new Handler();
+    private BleDeviceAdapter bleDeviceAdapter;
+    private List<BluetoothDevice> devices = new ArrayList<>();
     private static final int REQUEST_ENABLE_BT = 1;
-
+    // Stops scanning after 20 seconds.
+    private static final long SCAN_PERIOD = 20000;
+    private MyGattCallback myGattCallback;
     SensorManager sensormgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //checking api level
+        int apiLevel = Build.VERSION.SDK_INT;
+        Log.d("MyApp", "API Level: " + apiLevel);
         // bind views
 
         textConn = findViewById(R.id.connection);
@@ -70,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
+        btnSensorList = findViewById(R.id.sensorListButton);
         UserId = findViewById(R.id.UserId);
 
         // sensor code ahead
@@ -80,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (sensormgr != null) {
             //class to get data from the sensors
-            PhoneSensor sensors = new PhoneSensor(sensormgr);
+            PhoneSensor sensors = new PhoneSensor(sensormgr, btnSensorList, this);
             //this function returns data of all sensors in a list of lists
             //sensorDataList = sensors.get_all_data();
 
@@ -103,42 +139,76 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        // this is bluetooth code written by seerat. Anyone who touches it without
+        // her permission will be cursed by the gods. Amen.
+        
+
+        //creating bluetooth adapter
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        bleDeviceAdapter = new BleDeviceAdapter(this, devices, myGattCallback);
+        recyclerView.setAdapter(bleDeviceAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         //bluetooth connections
-        search = findViewById(R.id.search);
+        searchButton = findViewById(R.id.search);
+
+
         //if search for device button is pressed then:
-        search.setOnClickListener(new View.OnClickListener() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint({"MissingPermission", "NewApi"})
             @Override
             public void onClick(View v) {
-                search.setText("Searching...");
+                searchButton.setText("Searching...");
+                devices.clear();
+                bleDeviceAdapter.updateDevices(devices);
+                BluetoothLeScanner  bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+                ScanSettings settings = new ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+                bluetoothLeScanner.startScan(null, settings, new ScanCallback() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onScanResult(int callbackType, ScanResult result) {
+                        BluetoothDevice device = result.getDevice();
+                        if (!devices.contains(device)) {
+                            devices.add(device);
+                            bleDeviceAdapter.notifyItemInserted(devices.size() - 1);
+                        }
+                    }
 
-                //creating bluetooth adapter
-                bt = BluetoothAdapter.getDefaultAdapter();
-                if(bt == null || !bt.isEnabled())
+                    @Override
+                    public void onBatchScanResults(List<ScanResult> results) {
+                        for (ScanResult result : results) {
+                            BluetoothDevice device = result.getDevice();
+                            if (!devices.contains(device)) {
+                                devices.add(device);
+                                bleDeviceAdapter.notifyItemInserted(devices.size() - 1);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onScanFailed(int errorCode) {
+                        Log.e("BLE", "Scan failed with error code: " + errorCode);
+                    }
+                });
+/*
+                if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
                 {
                     // Prompt user to enable Bluetooth
                     try {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     }
                     catch (SecurityException e){
                         //catch exception
                     }
 
                 }
-                //Watch sensor class object which on receceiving a device will connect to it
-                WatchSensor receiver = new WatchSensor(bt);
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 
-                registerReceiver(receiver, filter);
+*/
 
-                // Start discovery
-                try {
-                    bt.startDiscovery();
-                }
-                catch (SecurityException e){
-                    Log.d("error", "security exception");
-                }
-                //SmartwatchSensorData sensorData = smartwatchSdk.getSensorData();
+
             }
         });
 

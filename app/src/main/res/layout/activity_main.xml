@@ -135,8 +135,8 @@
 
     <Button
         android:id="@+id/search"
-        android:layout_width="130sp"
-        android:layout_height="130sp"
+        android:layout_width="128dp"
+        android:layout_height="66dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="20dp"
 
@@ -174,8 +174,8 @@
         android:layout_height="60sp"
 
 
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/aldrich"
         android:gravity="center"
         android:text="Human Activity Recognition"
@@ -189,8 +189,8 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="76dp"
         android:fontFamily="@font/aldrich"
         android:text="Server Connection:"
         android:textColor="#FFFFFF"
@@ -225,15 +225,46 @@
 
     <EditText
         android:id="@+id/UserId"
-        android:layout_width="91dp"
-        android:layout_height="32dp"
+        android:layout_width="85dp"
+        android:layout_height="57dp"
         android:ems="10"
-        android:inputType="text"
         android:hint="User ID"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/IP"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.436"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.617" />
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/sensorListButton"
+        android:layout_width="165dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="25dp"
+        android:backgroundTint="#b844fe"
+        android:fontFamily="@font/aldrich"
+        android:text="Select Sensors"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:cornerRadius="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serverIp4"
+        app:layout_constraintVertical_bias="0.361" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="378dp"
+        android:layout_height="198dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="30dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
