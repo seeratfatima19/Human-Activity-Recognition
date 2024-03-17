@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     EditText IPtext, UserId;
 
 
-    Button btnIP, btndis, search, btnSensorList;
+    Button btnIP, btndis, searchButton, btnSensorList, start, stop;
 
     //Button btnIP, btndis, searchButton;
 
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 20000;
     private MyGattCallback myGattCallback;
     SensorManager sensormgr;
+
+    private static boolean sendData = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
+        start = findViewById(R.id.startdata);
+        stop = findViewById(R.id.stopdata);
         btnSensorList = findViewById(R.id.sensorListButton);
         UserId = findViewById(R.id.UserId);
 
@@ -127,12 +131,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
         //connecting server and disconnecting on button clicks
         //creating server object and passing context to it so it can be used to create toasts
         //sensor data is also passed to write it on server
 
         Server srvr = new Server(this);
-        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn, UserId);
+        srvr.connect_disconnect(btnIP, IPtext, btndis, textConn, UserId, start, stop);
         //this method will take both buttons of connecting and disconnecting, so server can be connected accordingly
         //the ip of the server is passed to it as well
 

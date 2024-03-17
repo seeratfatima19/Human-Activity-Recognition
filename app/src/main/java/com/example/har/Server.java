@@ -25,6 +25,7 @@ public class Server {
     String SERVER_IP;
     int SERVER_PORT=1026;
     private static boolean check;
+    private static boolean sendData;
     private Socket client;
     private PrintWriter printwriter;
 
@@ -39,7 +40,11 @@ public class Server {
         return check;
     }
 
-    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, EditText UserId) {
+    public static boolean checkData(){
+        return sendData;
+    }
+
+    public void connect_disconnect(Button btnIP, EditText IPtext, Button btndis, TextView textconn, EditText UserId, Button start, Button stop) {
         //this connects and disconnects app on button press
 
         //this is button for connecting
@@ -76,6 +81,22 @@ public class Server {
                 catch (Exception e){
                     showToast("Server is not connected....");
                 }
+            }
+        });
+
+
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("Started Sending Data");
+                sendData = true;
+            }
+        });
+
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendData = false;
             }
         });
 
@@ -124,7 +145,9 @@ public class Server {
                         break;
                     }
                     String s = PhoneSensor.getString();
-                    printwriter.print(s);
+                    if(checkData() == true) {
+                        printwriter.print(s);
+                    }
                 }
                 // write the message to output stream
 
