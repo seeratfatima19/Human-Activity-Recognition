@@ -312,7 +312,8 @@ public class PhoneSensor implements SensorEventListener {
 
     public static String getByteSensors(){
         String stringActiveSensorList = String.join(",", Arrays.toString(byteSensors));
-        return stringActiveSensorList;
+        String stringActiveSensorList1 = stringActiveSensorList.substring(1, stringActiveSensorList.length()-1);
+        return stringActiveSensorList1;
     }
 
 }

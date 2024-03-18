@@ -1,7 +1,7 @@
 package com.example.har;
 
 import android.content.Context;
-
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URI;
@@ -28,6 +29,7 @@ public class Server {
     private static boolean sendData;
     private Socket client;
     private PrintWriter printwriter;
+    private OutputStream output;
 
     public Server(){
 
@@ -74,8 +76,8 @@ public class Server {
                 try{
                     showToast("Disconnected the server");
                     check = false;
-                    printwriter.flush();
-                    printwriter.close();
+                    output.flush();
+                    output.close();
                     client.close();
                 }
                 catch (Exception e){
@@ -120,16 +122,20 @@ public class Server {
                 // Creates a stream socket and connects it to the specified port number on the named host.
                 client = new Socket(ip, 4444);
                 // connect to server
-                printwriter = new PrintWriter(client.getOutputStream(), true);
-                printwriter.print(UserId);
+                 output = client.getOutputStream();
+                output.write(UserId.getBytes());
                 String sensorList = PhoneSensor.getByteSensors();
-                printwriter.print(sensorList);
+                output.write(sensorList.getBytes());
                 while(true){
                     if(check_f() == false){
                         break;
                     }
                     String s = PhoneSensor.getString();
-                    printwriter.print(s);
+                    System.out.println(s);
+                    Log.d("SensorData", s);
+                    Log.d("hardcoded", "0.93,0.65,0.7896,-0.897");
+
+                    output.write(s.getBytes());
 
                 }
                 // write the message to output stream
@@ -143,8 +149,8 @@ public class Server {
                 //}
 
 
-                printwriter.flush();
-                printwriter.close();
+                output.flush();
+                output.close();
 
                 // closing the connection
                 //client.close();
