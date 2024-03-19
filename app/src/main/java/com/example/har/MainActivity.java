@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnIP, btndis, searchButton, btnSensorList, start, stop;
 
-    //Button btnIP, btndis, searchButton;
+    Button searchButton;
 
     private Socket client;
     private PrintWriter printwriter;
