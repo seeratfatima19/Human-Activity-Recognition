@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     EditText IPtext, UserId;
 
 
-    Button btnIP, btndis, searchButton, btnSensorList, start, stop;
+    Button btnIP, btndis, search, btnSensorList, start, stop;
 
     Button searchButton;
 

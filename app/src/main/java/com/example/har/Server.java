@@ -30,7 +30,7 @@ public class Server {
     private Socket client;
     private PrintWriter printwriter;
     private OutputStream output;
-
+    public static boolean collectData = false;
     public Server(){
 
     }
@@ -57,7 +57,7 @@ public class Server {
                 String myIP = IPtext.getText().toString();
                 //String message = mtext.getText().toString();
                 check = true;
-
+                collectData = true;
                 textconn.setText("Connected");
                 String userid = UserId.getText().toString();
                 new Thread(new ClientThread(myIP, userid)).start();
@@ -127,16 +127,14 @@ public class Server {
                 String sensorList = PhoneSensor.getByteSensors();
                 output.write(sensorList.getBytes());
                 while(true){
-                    if(check_f() == false){
+                    if(check_f() == false)
                         break;
+                    if(collectData) {
+                        String s = PhoneSensor.getString();
+                        Log.d("SensorData", s);
+                        output.write(s.getBytes());
+                        collectData = false;
                     }
-                    String s = PhoneSensor.getString();
-                    System.out.println(s);
-                    Log.d("SensorData", s);
-                    Log.d("hardcoded", "0.93,0.65,0.7896,-0.897");
-
-                    output.write(s.getBytes());
-
                 }
                 // write the message to output stream
 
