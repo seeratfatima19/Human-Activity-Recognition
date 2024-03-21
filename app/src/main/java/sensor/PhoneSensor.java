@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 import com.example.har.MainActivity;
@@ -27,9 +28,10 @@ public class PhoneSensor implements SensorEventListener {
     SensorManager sensorManager;
     Button btnSensorList;
     static String str;
-
+    static String check_str;
+    DecimalFormat df = new DecimalFormat("000.00");
     List<Sensor> implementedSensors = new ArrayList<>();
-    int byteSensors[] = {0,0,0,0,0,0,0,0};
+    static int byteSensors[] = {0,0,0,0,0,0,0,0};
     Context context;
 
     List<CheckBox> checkBoxList = new ArrayList<>();
@@ -152,7 +154,7 @@ public class PhoneSensor implements SensorEventListener {
                 accelerometerList.add((double)accelerometer.getX());
                 accelerometerList.add((double)accelerometer.getY());
                 accelerometerList.add((double)accelerometer.getZ());
-                str += accelerometer.getX() + "," + accelerometer.getY() + "," + accelerometer.getZ() + ",";
+                str += df.format(accelerometer.getX()) + "," + df.format(accelerometer.getY()) + "," + df.format(accelerometer.getZ()) + ",";
                 listOfSensors.add(accelerometerList);
                 System.out.println("A Str " + str + "\n");
                 byteSensors[0] = 1;
@@ -165,7 +167,7 @@ public class PhoneSensor implements SensorEventListener {
                 gyroscopeList.add((double)gyroscope.getValueX());
                 gyroscopeList.add((double)gyroscope.getValueY());
                 gyroscopeList.add((double)gyroscope.getValueZ());
-                str += gyroscope.getValueX() + ", " + gyroscope.getValueY() + ", " + gyroscope.getValueZ() + ", ";
+                str += df.format(gyroscope.getValueX()) + ", " + df.format(gyroscope.getValueY()) + ", " + df.format(gyroscope.getValueZ()) + ", ";
                 listOfSensors.add(gyroscopeList);
                 System.out.println("G Str " + str + "\n");
                 byteSensors[1] = 1;
@@ -178,7 +180,7 @@ public class PhoneSensor implements SensorEventListener {
                 magnetList.add((double)magnet.getX());
                 magnetList.add((double)magnet.getY());
                 magnetList.add((double)magnet.getZ());
-                str += magnet.getX() + "," + magnet.getY() + "," + magnet.getZ() + ",";
+                str += df.format(magnet.getX()) + "," + df.format(magnet.getY()) + "," + df.format(magnet.getZ()) + ",";
                 listOfSensors.add(magnetList);
                 System.out.println("M Str " + str + "\n");
                 byteSensors[2] = 1;
@@ -219,12 +221,14 @@ public class PhoneSensor implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        float distanceValue = 0.0F;
+        float distanceValue = 0.00F;
         String acceleration = "", gravityData = "", rotationData = "";
-        float stepCount = 0.0F;
+        float stepCount = 0.00F;
+        String proximityData = "", stepCountData = "";
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             List<Double> proximityList = new ArrayList<Double>();
-            distanceValue = event.values[0];
+            distanceValue = Float.parseFloat(df.format(event.values[0]));
+            proximityData= distanceValue + "," + "000.00"+ "," + "000.00"+ ",";
             proximityList.add((double) distanceValue);
             listOfSensors.add(proximityList);
             byteSensors[3] = 1;
@@ -235,7 +239,7 @@ public class PhoneSensor implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             List<Double> linearAccList = new ArrayList<Double>();
             float[] values = event.values;
-            acceleration = values[0] + "," + values[1] + "," + values[2];
+            acceleration = "LinearAcceleration.csv,"+df.format(values[0]) + "," + df.format(values[1]) + "," + df.format(values[2]) + ",";
             linearAccList.add((double)values[0]);
             linearAccList.add((double)values[1]);
             linearAccList.add((double)values[2]);
@@ -247,7 +251,8 @@ public class PhoneSensor implements SensorEventListener {
 
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             List<Double> stepCounterList = new ArrayList<Double>();
-            stepCount = event.values[0];
+            stepCount = Float.parseFloat(df.format(event.values[0]));
+             stepCountData= "StepCounter.csv,"+stepCount + ","+ "000.00"+ "," + "000.00"+ ",";
             stepCounterList.add((double) stepCount);
             listOfSensors.add(stepCounterList);
             byteSensors[5] = 1;
@@ -258,7 +263,7 @@ public class PhoneSensor implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
             List<Double> gravityList = new ArrayList<Double>();
             float[] values = event.values;
-            gravityData = values[0] + "," + values[1] + "," + values[2];
+            gravityData = "Gravity.csv,"+df.format(values[0]) + "," + df.format(values[1]) + "," + df.format(values[2]) + ",";
             gravityList.add((double)values[0]);
             gravityList.add((double)values[1]);
             gravityList.add((double)values[2]);
@@ -288,16 +293,19 @@ public class PhoneSensor implements SensorEventListener {
             rotationVectorList.add((double)rollDegrees);
             listOfSensors.add(rotationVectorList);
             byteSensors[7] = 1;
-            System.out.println("RV Byte " + byteSensors[7] + "\n");
-            rotationData = azimuthDegrees + "," + pitchDegrees + "," + rollDegrees;
+            //System.out.println("RV Byte " + byteSensors[7] + "\n");
+            rotationData = "RotationVector.csv,"+df.format(azimuthDegrees) + "," + df.format(pitchDegrees) + "," + df.format(rollDegrees)+ ",";
+            //System.out.println(rotationData);
             //textViewAll.setText(rotationData);
         }
         //Server s = new Server();
         //s.write_to_server(listOfSensors);
 
-        str = distanceValue + "," + acceleration + "," + gravityData + "," + rotationData + "," +stepCount + ",";
-        System.out.println("L Str " + str + "\n");
-
+        str= proximityData + acceleration + stepCountData + gravityData + rotationData + "$";
+        check_str = str;
+        str = "";
+        System.out.println("Data =  " + check_str + "\n");
+        Server.collectData = true;
 
     }
 
@@ -307,8 +315,15 @@ public class PhoneSensor implements SensorEventListener {
     }
 
     public static String getString(){
-        return str;
+
+        return check_str;
+
     }
 
+    public static String getByteSensors(){
+        String stringActiveSensorList = String.join(",", Arrays.toString(byteSensors));
+        String stringActiveSensorList1 = stringActiveSensorList.substring(1, stringActiveSensorList.length()-1);
+        return stringActiveSensorList1;
+    }
 
 }

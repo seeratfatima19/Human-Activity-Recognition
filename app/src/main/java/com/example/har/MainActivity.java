@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     EditText IPtext, UserId;
 
 
-    Button btnIP, btndis, search, btnSensorList;
+    Button btnIP, btndis, search, btnSensorList, start, stop;
 
     Button searchButton;
 
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 20000;
     private MyGattCallback myGattCallback;
     SensorManager sensormgr;
+
+    private static boolean sendData = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
         IPtext=findViewById(R.id.IP);
         btnIP = findViewById(R.id.buttonIP);
         btndis = findViewById(R.id.btndisconnect);
+       //start = findViewById(R.id.startdata);
+       //stop = findViewById(R.id.stopdata);
         btnSensorList = findViewById(R.id.sensorListButton);
         UserId = findViewById(R.id.UserId);
 
@@ -124,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Sensor Manager is null");
             Toast.makeText(this, "Sensor mgr is null", Toast.LENGTH_SHORT).show();
         }
+
 
 
 
