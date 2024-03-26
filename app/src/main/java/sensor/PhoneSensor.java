@@ -29,7 +29,7 @@ public class PhoneSensor implements SensorEventListener {
     Button btnSensorList;
     static String str;
     static String check_str;
-    DecimalFormat df = new DecimalFormat("000.00");
+    DecimalFormat df = new DecimalFormat("0.00");
     List<Sensor> implementedSensors = new ArrayList<>();
     static int byteSensors[] = {0,0,0,0,0,0,0,0};
     Context context;
@@ -148,44 +148,16 @@ public class PhoneSensor implements SensorEventListener {
     for(Integer s: selectedSensorsList){
 
             if(s == Sensor.TYPE_ACCELEROMETER){
-
-                Accelerometer accelerometer = new Accelerometer(mgr);
-                List<Double> accelerometerList = new ArrayList<Double>();
-                accelerometerList.add((double)accelerometer.getX());
-                accelerometerList.add((double)accelerometer.getY());
-                accelerometerList.add((double)accelerometer.getZ());
-                str += df.format(accelerometer.getX()) + "," + df.format(accelerometer.getY()) + "," + df.format(accelerometer.getZ()) + ",";
-                listOfSensors.add(accelerometerList);
-                System.out.println("A Str " + str + "\n");
-                byteSensors[0] = 1;
-                System.out.println("A Byte " + byteSensors[0] + "\n");
-
+                Sensor accelerometer = mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                setSensors(accelerometer);
             }
             if(s == Sensor.TYPE_GYROSCOPE){
-                Gyroscope  gyroscope = new Gyroscope(mgr);
-                List<Double> gyroscopeList = new ArrayList<Double>();
-                gyroscopeList.add((double)gyroscope.getValueX());
-                gyroscopeList.add((double)gyroscope.getValueY());
-                gyroscopeList.add((double)gyroscope.getValueZ());
-                str += df.format(gyroscope.getValueX()) + ", " + df.format(gyroscope.getValueY()) + ", " + df.format(gyroscope.getValueZ()) + ", ";
-                listOfSensors.add(gyroscopeList);
-                System.out.println("G Str " + str + "\n");
-                byteSensors[1] = 1;
-                System.out.println("G Byte " + byteSensors[1] + "\n");
-
+                Sensor gyroscope = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+                setSensors(gyroscope);
             }
             if(s == Sensor.TYPE_MAGNETIC_FIELD){
-                Magnetometer magnet = new Magnetometer(mgr);
-                List<Double> magnetList = new ArrayList<Double>();
-                magnetList.add((double)magnet.getX());
-                magnetList.add((double)magnet.getY());
-                magnetList.add((double)magnet.getZ());
-                str += df.format(magnet.getX()) + "," + df.format(magnet.getY()) + "," + df.format(magnet.getZ()) + ",";
-                listOfSensors.add(magnetList);
-                System.out.println("M Str " + str + "\n");
-                byteSensors[2] = 1;
-                System.out.println("M Byte " + byteSensors[2] + "\n");
-
+                Sensor magnetometer = mgr.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                setSensors(magnetometer);
             }
             if(s == Sensor.TYPE_PROXIMITY){
                 Sensor proximity = mgr.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -225,10 +197,30 @@ public class PhoneSensor implements SensorEventListener {
         String acceleration = "", gravityData = "", rotationData = "";
         float stepCount = 0.00F;
         String proximityData = "", stepCountData = "";
+        String magneto = "", accelero = "", gyro="";
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            accelero = "Accelerometer.csv,"+df.format(event.values[0]) + "," + df.format(event.values[1]) + "," + df.format(event.values[2]) + ",";
+            byteSensors[0] = 1;
+            System.out.println("Acc Byte " + byteSensors[0] + "\n");
+
+        }
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE){
+            gyro = "Gyroscope.csv,"+df.format(event.values[0]) + "," + df.format(event.values[1]) + "," + df.format(event.values[2]) + ",";
+            byteSensors[1] = 1;
+            System.out.println("Gyr Byte " + byteSensors[1] + "\n");
+
+        }
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
+            magneto = "Magnetometer.csv,"+df.format(event.values[0]) + "," + df.format(event.values[1]) + "," + df.format(event.values[2]) + ",";
+            //System.out.println("M Str " + magneto + "\n");
+            byteSensors[2] = 1;
+            System.out.println("M Byte " + byteSensors[2] + "\n");
+
+        }
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             List<Double> proximityList = new ArrayList<Double>();
-            distanceValue = Float.parseFloat(df.format(event.values[0]));
-            proximityData= distanceValue + "," + "000.00"+ "," + "000.00"+ ",";
+            //distanceValue = Float.parseFloat(df.format(event.values[0]));
+            proximityData= df.format(event.values[0]) + "," + "000.00"+ "," + "000.00"+ ",";
             proximityList.add((double) distanceValue);
             listOfSensors.add(proximityList);
             byteSensors[3] = 1;
@@ -251,8 +243,9 @@ public class PhoneSensor implements SensorEventListener {
 
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             List<Double> stepCounterList = new ArrayList<Double>();
-            stepCount = Float.parseFloat(df.format(event.values[0]));
-             stepCountData= "StepCounter.csv,"+stepCount + ","+ "000.00"+ "," + "000.00"+ ",";
+            //stepCount = Float.parseFloat(df.format(event.values[0]));
+            System.out.println("In StepCounter");
+             stepCountData= "StepCounter.csv,"+df.format(event.values[0]) + ","+ "000.00"+ "," + "000.00"+ ",";
             stepCounterList.add((double) stepCount);
             listOfSensors.add(stepCounterList);
             byteSensors[5] = 1;
@@ -301,7 +294,7 @@ public class PhoneSensor implements SensorEventListener {
         //Server s = new Server();
         //s.write_to_server(listOfSensors);
 
-        str= proximityData + acceleration + stepCountData + gravityData + rotationData + "$";
+        str= accelero + gyro + magneto + proximityData + acceleration + stepCountData + gravityData + rotationData + "$";
         check_str = str;
         str = "";
         System.out.println("Data =  " + check_str + "\n");
